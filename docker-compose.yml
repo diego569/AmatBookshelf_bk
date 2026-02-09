@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: amat-backend
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - DATABASE_URL=postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@db:5432/${DB_NAME:-amatbookshelf}?schema=public
+      - PORT=3000
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:dev
+    networks:
+      - amat-net
+
+  db:
+    image: postgres:16-alpine
+    container_name: amat-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-amatbookshelf}
+    ports:
+      - "5432:5432"
+    volumes:
+      - amat-postgres-data:/var/lib/postgresql/data
+    networks:
+      - amat-net
+
+networks:
+  amat-net:
+    driver: bridge
+
+volumes:
+  amat-postgres-data:
