@@ -7,6 +7,7 @@ import { IdentityModule } from './identity/identity.module';
 import { ProgramModule } from './program/program.module';
 import { GovernanceModule } from './governance/governance.module';
 import { SharedModule } from './shared/shared.module';
+import { AppContextController } from './app-context.controller';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { SharedModule } from './shared/shared.module';
     GovernanceModule,
     SharedModule
   ],
-  controllers: [AppController],
+  controllers: [AppController, AppContextController],
   providers: [AppService],
 })
 export class AppModule { }

@@ -93,6 +93,60 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 - Website - [https://nestjs.com](https://nestjs.com/)
 - Twitter - [@nestframework](https://twitter.com/nestframework)
 
+## MVP Preparation & Setup
+
+The backend has been prepared for the MVP frontend with deterministic seed data and enhanced attendance logic.
+
+### 1. Database Setup & Seeding
+
+```bash
+# Run migrations
+npx prisma migrate dev
+
+# Seed deterministic MVP data
+npx prisma db seed
+```
+
+**Seeded Data Summary:**
+- **Club:** "Librero de Amat"
+- **Cycle:** "Verano de lectura 2026"
+- **Sessions:** 
+  - `coordinacion-session-id`: 2026-02-01 19:00 Lima
+  - `san-valentin-session-id`: 2026-02-14 17:00 Lima
+- **Admin:** `admin@librerodeamat.com` (password: `admin123`)
+
+### 2. QR Flow Testing (Manual)
+
+#### A) Get App Context
+Discover IDs for the default club and current cycle.
+```bash
+curl http://localhost:3000/app-context
+```
+
+#### B) Get QR Token (as Admin/Moderator)
+Replace `{sessionId}` with `san-valentin-session-id`. Requires JWT from admin/mod login.
+```bash
+curl -X GET http://localhost:3000/sessions/{sessionId}/qr-token \
+  -H "Authorization: Bearer {JWT}"
+```
+
+#### C) Scan QR Token (as any User)
+If the user has no membership, they will be auto-joined as a `MEMBER`.
+```bash
+curl -X POST http://localhost:3000/attendance/scan \
+  -H "Authorization: Bearer {JWT}" \
+  -H "Content-Type: application/json" \
+  -d '{"qrToken": "{TOKEN_FROM_STEP_B}"}'
+```
+
+**Expected Response:**
+Detailed JSON with `ok`, `status` (ON_TIME/LATE), `pointsDelta`, and `totalPoints`.
+
+### 3. Local Development CORS
+CORS is enabled for `http://localhost:3001` by default. Configure via `CORS_ORIGINS` in `.env`.
+
+---
+
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).

@@ -13,7 +13,7 @@ export class PrismaMembershipRepository implements IMembershipRepository {
         const data = MembershipMapper.toPersistence(membership);
         const created = await this.prisma.membership.create({
             data: {
-                id: undefined, // Let DB generate UUID
+                id: data.id,
                 clubId: data.clubId,
                 personId: data.personId,
                 role: data.role,

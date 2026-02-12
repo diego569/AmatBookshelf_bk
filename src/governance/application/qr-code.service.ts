@@ -1,10 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
 export interface QrTokenPayload {
     sessionId: string;
     clubId: string;
+    cycleId?: string;
     timestamp: number;
 }
 
@@ -24,10 +25,11 @@ export class QrCodeService {
      * Generate a short-lived signed JWT for QR code
      * Expires in 30 seconds (TOTP-style)
      */
-    generateQrToken(sessionId: string, clubId: string): string {
+    generateQrToken(sessionId: string, clubId: string, cycleId?: string): string {
         const payload: QrTokenPayload = {
             sessionId,
             clubId,
+            cycleId,
             timestamp: Date.now(),
         };
 
@@ -43,24 +45,9 @@ export class QrCodeService {
      */
     verifyQrToken(token: string): QrTokenPayload {
         try {
-            const payload = this.jwtService.verify<QrTokenPayload>(token, {
-                secret: this.QR_SECRET,
-            });
-
-            // Additional check: ensure timestamp is within acceptable range
-            const now = Date.now();
-            const tokenAge = (now - payload.timestamp) / 1000; // in seconds
-
-            if (tokenAge > this.QR_EXPIRY_SECONDS) {
-                throw new UnauthorizedException('QR code has expired');
-            }
-
-            return payload;
-        } catch (error) {
-            if (error instanceof UnauthorizedException) {
-                throw error;
-            }
-            throw new UnauthorizedException('Invalid or expired QR code');
+            return this.jwtService.verify(token, { secret: this.QR_SECRET });
+        } catch (err) {
+            throw new BadRequestException('Invalid or expired QR token');
         }
     }
 }

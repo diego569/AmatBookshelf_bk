@@ -34,6 +34,13 @@ import { AuthModule } from './infrastructure/auth/auth.module';
             useClass: PrismaMembershipRepository,
         },
     ],
-    exports: [ClubService, PersonService, MembershipService], // Export so other modules can use services
+    exports: [
+        ClubService,
+        PersonService,
+        MembershipService,
+        IClubRepository,
+        IPersonRepository,
+        IMembershipRepository,
+    ],
 })
 export class IdentityModule { }
