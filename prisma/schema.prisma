@@ -29,17 +29,21 @@ model Club {
 }
 
 model Person {
-  id        String   @id @default(uuid())
-  fullName  String   @map("full_name")
-  email     String?  
-  phone     String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  fullName      String   @map("full_name")
+  email         String?  @unique
+  phone         String?
+  googleId      String?  @unique @map("google_id")
+  passwordHash  String?  @map("password_hash")
+  refreshToken  String?  @map("refresh_token")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   memberships Membership[]
 
   @@map("people")
 }
+
 
 enum MemberRole {
   MEMBER

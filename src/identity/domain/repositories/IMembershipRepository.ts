@@ -6,6 +6,7 @@ export interface IMembershipRepository {
     findByClubAndPerson(clubId: string, personId: string): Promise<Membership | null>;
     findById(id: string): Promise<Membership | null>;
     findAllByClub(clubId: string): Promise<Membership[]>;
+    findByPersonId(personId: string): Promise<Membership[]>;
     update(membership: Membership): Promise<Membership>;
 }
 

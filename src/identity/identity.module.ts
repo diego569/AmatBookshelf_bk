@@ -12,9 +12,10 @@ import { MembershipController } from './interfaces/membership.controller';
 import { MembershipService } from './application/membership.service';
 import { PrismaMembershipRepository } from './infrastructure/prisma-membership.repository';
 import { IMembershipRepository } from './domain/repositories/IMembershipRepository';
+import { AuthModule } from './infrastructure/auth/auth.module';
 
 @Module({
-    imports: [],
+    imports: [AuthModule],
     controllers: [ClubController, PersonController, MembershipController],
     providers: [
         ClubService,
