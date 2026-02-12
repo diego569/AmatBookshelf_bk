@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req, Res } from '@nestjs/common';
+
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
@@ -19,10 +20,14 @@ export class AuthController {
     @Public()
     @Get('google/callback')
     @UseGuards(AuthGuard('google'))
-    async googleAuthCallback(@Req() req) {
+    async googleAuthCallback(@Req() req, @Res() res) {
         const person = await this.authService.validateGoogleUser(req.user);
         const tokens = await this.authService.login(person.id, person.email);
-        return tokens;
+
+        // Redirect to frontend with tokens
+        // Check if we are in development and use localhost:3000, otherwise use environment variable
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        return res.redirect(`${frontendUrl}/auth/callback?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`);
     }
 
     @Public()
