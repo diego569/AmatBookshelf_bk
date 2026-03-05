@@ -4,7 +4,6 @@ import { PrismaService } from '../../shared/infrastructure/prisma/prisma.service
 import { ISessionRepository } from '../domain/repositories/ISessionRepository';
 import { Session, SessionType } from '../domain/session.entity';
 import { SessionMapper } from './mappers/session.mapper';
-import { SessionType as PrismaSessionType } from '@prisma/client';
 
 @Injectable()
 export class PrismaSessionRepository implements ISessionRepository {
@@ -18,8 +17,11 @@ export class PrismaSessionRepository implements ISessionRepository {
                 clubId: data.clubId,
                 cycleId: data.cycleId,
                 sessionType: data.sessionType,
+                status: data.status,
                 startsAt: data.startsAt,
                 endsAt: data.endsAt,
+                startedAt: data.startedAt,
+                endedAt: data.endedAt,
                 title: data.title,
             }
         });
@@ -52,18 +54,37 @@ export class PrismaSessionRepository implements ISessionRepository {
         return sessions.map(SessionMapper.toDomain);
     }
 
+    async findLiveByClub(clubId: string): Promise<Session | null> {
+        const session = await this.prisma.session.findFirst({
+            where: {
+                clubId,
+                status: 'LIVE',
+            },
+            orderBy: { updatedAt: 'desc' },
+        });
+        if (!session) return null;
+        return SessionMapper.toDomain(session);
+    }
+
     async update(session: Session): Promise<Session> {
         const data = SessionMapper.toPersistence(session);
         const updated = await this.prisma.session.update({
             where: { id: session.id },
             data: {
                 sessionType: data.sessionType,
+                status: data.status,
                 startsAt: data.startsAt,
                 endsAt: data.endsAt,
+                startedAt: data.startedAt,
+                endedAt: data.endedAt,
                 title: data.title,
                 cycleId: data.cycleId
             }
         });
         return SessionMapper.toDomain(updated);
+    }
+
+    async delete(id: string): Promise<void> {
+        await this.prisma.session.delete({ where: { id } });
     }
 }

@@ -122,13 +122,22 @@ enum SessionType {
   EXTRAORDINARIA // Extraordinary
 }
 
+enum SessionStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+}
+
 model Session {
   id          String      @id @default(uuid())
   clubId      String      @map("club_id")
   cycleId     String?     @map("cycle_id")
   sessionType SessionType @map("session_type")
+  status      SessionStatus @default(SCHEDULED)
   startsAt    DateTime    @map("starts_at")
   endsAt      DateTime?   @map("ends_at")
+  startedAt   DateTime?   @map("started_at")
+  endedAt     DateTime?   @map("ended_at")
   title       String?
   createdAt   DateTime    @default(now()) @map("created_at")
   updatedAt   DateTime    @updatedAt @map("updated_at")

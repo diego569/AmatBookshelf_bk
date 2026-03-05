@@ -111,8 +111,8 @@ npx prisma db seed
 - **Club:** "Librero de Amat"
 - **Cycle:** "Verano de lectura 2026"
 - **Sessions:** 
-  - `coordinacion-session-id`: 2026-02-01 19:00 Lima
-  - `san-valentin-session-id`: 2026-02-14 17:00 Lima
+  - `c3a8a0c7-5b6a-4d40-9a30-3e7e8ac9a7c3`: 2026-02-01 19:00 Lima
+  - `9f9c8c5d-6fcb-4b3c-9c2e-2c5b6d9a0e3a`: 2026-02-14 17:00 Lima
 - **Admin:** `admin@librerodeamat.com` (password: `admin123`)
 
 ### 2. QR Flow Testing (Manual)
@@ -124,7 +124,7 @@ curl http://localhost:3000/app-context
 ```
 
 #### B) Get QR Token (as Admin/Moderator)
-Replace `{sessionId}` with `san-valentin-session-id`. Requires JWT from admin/mod login.
+Replace `{sessionId}` with `9f9c8c5d-6fcb-4b3c-9c2e-2c5b6d9a0e3a`. Requires JWT from admin/mod login.
 ```bash
 curl -X GET http://localhost:3000/sessions/{sessionId}/qr-token \
   -H "Authorization: Bearer {JWT}"

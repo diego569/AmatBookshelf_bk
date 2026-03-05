@@ -6,6 +6,12 @@ const prisma = new PrismaClient();
 async function main() {
     console.log('Seeding MVP data...');
 
+    const CLUB_ID = '0f88d6c2-5a7d-4f10-9c2e-7a8b9b2f1b8e';
+    const RULESET_ID = '8a0e2c9b-7d4f-4a2c-9e1c-4f2b6a9c0d7e';
+    const CYCLE_ID = '6c1fd102-8a54-4f0f-8d8e-4b8a3a2d7b7a';
+    const SESSION_COORD_ID = 'c3a8a0c7-5b6a-4d40-9a30-3e7e8ac9a7c3';
+    const SESSION_VAL_ID = '9f9c8c5d-6fcb-4b3c-9c2e-2c5b6d9a0e3a';
+
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@librerodeamat.com';
     const adminName = process.env.ADMIN_NAME || 'Admin';
     const modEmail = process.env.MOD_EMAIL || 'mod@librerodeamat.com';
@@ -13,10 +19,10 @@ async function main() {
 
     // 1. Default Club
     const club = await prisma.club.upsert({
-        where: { id: 'librero-de-amat-id' }, // We use a deterministic ID for seeding
+        where: { id: CLUB_ID }, // Deterministic UUID for seeding
         update: {},
         create: {
-            id: 'librero-de-amat-id',
+            id: CLUB_ID,
             name: 'Librero de Amat',
             mode: 'in-person',
         },
@@ -109,13 +115,13 @@ async function main() {
 
     // 5. Default RuleSet
     const ruleSet = await prisma.ruleSet.upsert({
-        where: { id: 'default-ruleset-id' },
+        where: { id: RULESET_ID },
         update: {
             active: true,
             priority: 1,
         },
         create: {
-            id: 'default-ruleset-id',
+            id: RULESET_ID,
             clubId: club.id,
             name: 'Reglas por defecto',
             appliesTo: 'ALL',
@@ -151,10 +157,10 @@ async function main() {
 
     // 6. Default Cycle
     const cycle = await prisma.cycle.upsert({
-        where: { id: 'verano-2026-cycle-id' },
+        where: { id: CYCLE_ID },
         update: {},
         create: {
-            id: 'verano-2026-cycle-id',
+            id: CYCLE_ID,
             clubId: club.id,
             name: 'Verano de lectura 2026',
             startDate: new Date('2026-02-01T00:00:00Z'),
@@ -166,13 +172,13 @@ async function main() {
     // 7. Sessions
     const sessions = [
         {
-            id: 'coordinacion-session-id',
+            id: SESSION_COORD_ID,
             title: 'Coordinación inicial',
             sessionType: SessionType.COORDINACION,
             startsAt: new Date('2026-02-02T00:00:00Z'), // 2026-02-01 19:00 Lima (UTC-5)
         },
         {
-            id: 'san-valentin-session-id',
+            id: SESSION_VAL_ID,
             title: 'Sesión de San Valentín',
             sessionType: SessionType.LECTURA,
             startsAt: new Date('2026-02-14T22:00:00Z'), // 2026-02-14 17:00 Lima (UTC-5)

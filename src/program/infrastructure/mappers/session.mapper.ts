@@ -1,6 +1,6 @@
 
-import { Session as PrismaSession, SessionType as PrismaSessionType } from '@prisma/client';
-import { Session, SessionType } from '../../domain/session.entity';
+import { Session as PrismaSession, SessionStatus as PrismaSessionStatus, SessionType as PrismaSessionType } from '@prisma/client';
+import { Session, SessionStatus, SessionType } from '../../domain/session.entity';
 
 export class SessionMapper {
     static toDomain(prisma: PrismaSession): Session {
@@ -9,8 +9,11 @@ export class SessionMapper {
             prisma.clubId,
             SessionMapper.mapType(prisma.sessionType),
             prisma.startsAt,
+            SessionMapper.mapStatus(prisma.status),
             prisma.cycleId,
             prisma.endsAt,
+            prisma.startedAt,
+            prisma.endedAt,
             prisma.title,
             prisma.createdAt,
         );
@@ -22,8 +25,11 @@ export class SessionMapper {
             clubId: domain.clubId,
             cycleId: domain.cycleId ?? null,
             sessionType: SessionMapper.mapTypeForPrisma(domain.sessionType),
+            status: SessionMapper.mapStatusForPrisma(domain.status),
             startsAt: domain.startsAt,
             endsAt: domain.endsAt ?? null,
+            startedAt: domain.startedAt ?? null,
+            endedAt: domain.endedAt ?? null,
             title: domain.title ?? null,
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -37,5 +43,13 @@ export class SessionMapper {
     private static mapTypeForPrisma(type: SessionType): PrismaSessionType {
         // Assuming enum names match exactly
         return PrismaSessionType[type as keyof typeof PrismaSessionType];
+    }
+
+    private static mapStatus(status: PrismaSessionStatus): SessionStatus {
+        return SessionStatus[status as keyof typeof SessionStatus] || SessionStatus.SCHEDULED;
+    }
+
+    private static mapStatusForPrisma(status: SessionStatus): PrismaSessionStatus {
+        return PrismaSessionStatus[status as keyof typeof PrismaSessionStatus];
     }
 }
